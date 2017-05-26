@@ -9,6 +9,7 @@ public class Map {
 	
 	public Map(char[][] map) {
 		this.map = map;
+		judge();
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[i].length; j++) {
 				if(map[i][j] == 'I')
@@ -18,6 +19,10 @@ public class Map {
 			}
 		}
 		setWaitingPoint();
+	}
+	
+	public boolean judge() {
+		//判断地图是否正确
 	}
 	
 	public void setWaitingPoint() {
