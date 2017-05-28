@@ -2,18 +2,35 @@ package robotDispatch;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main {
+	
+	public static Map map;
+	public static Car[] cars;
+	public static int k, p, a, b, w, h, N;
+	
 
 	public static void main(String[] args) throws Exception {
+		
+		input();
+		print();
+		
+		if(map.getIfValid()) {
+			System.out.println("YES");
+			dispatch();
+		} else {
+			System.out.println("NO");
+		}
+		
+	}
+	
+	private static void input() throws Exception {
 		String fileInPath = "D:\\java_files\\resource\\1.txt";
  		File f = new File(fileInPath);
  		Scanner cin = new Scanner(new FileInputStream(f));
 	
 		//Scanner cin = new Scanner(System.in);
-		int k, p, a, b, w, h, N;
 		
 		k = cin.nextInt();
 		p = cin.nextInt();
@@ -35,10 +52,10 @@ public class Main {
 				l++;
 			}
 		}
-		Map map = new Map(w, h, mapMatrix);
+		map = new Map(w, h, mapMatrix);
 		
 		N = cin.nextInt();
-		Car[] cars = new Car[N];
+		cars = new Car[N];
 		for(int i = 0; i < N; i++) {
 			int id, t1, t2, maxTime, mass;
 			id = cin.nextInt();
@@ -50,7 +67,9 @@ public class Main {
 			cars[i] = car1;
 		}
 		cin.close();
-		
+	}
+	
+	private static void print() {
 		System.out.println(k + " " + p + " " + a + " " + b);
 		map.print();
 		for(int i = 0; i < N; i++)
@@ -62,6 +81,10 @@ public class Main {
 			return true;
 		else
 			return false;
+	}
+	
+	private static void dispatch() {
+		
 	}
 
 }

@@ -2,8 +2,8 @@ package robotDispatch;
 
 public class Point {
 	
-	public int x;
-	public int y;
+	private int x;
+	private int y;
 	
 	public Point(int x, int y) {
 		this.x = x;
@@ -25,5 +25,12 @@ public class Point {
 
 	public void print() {
 		System.out.println("(" + x + "," + y + ")");
+	}
+	
+	public boolean equal1(Point p) {
+		if(p.getX() == this.x && p.getY() == this.y)
+			return true;
+		else
+			return false;
 	}
 }
