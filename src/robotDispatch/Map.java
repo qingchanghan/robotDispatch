@@ -197,6 +197,37 @@ public class Map {
 	
 	public void setWaitingPoint() {
 		//设置机器人等待点
+		int i, min = 0;
+		Point minPoint = null;
+		for(i = 0; i < w*h; i++) {
+			int x = i / h, y = i % h;
+			if(map[x][y] != 'X')
+				continue;
+			int sum = 0, j;
+			for(j = 0; j < w*h; j++) {
+				int x1 = j / h, y1 = j % h;
+				if(i == j || map[x1][y1] == 'B' || map[x1][y1] == 'X') {
+					continue;
+				}
+				if(pathLength[i][j] == 0) {
+					j = -1;
+					break;
+				}
+				sum += pathLength[i][j];
+			}
+			if(j == -1)
+				continue;
+			System.out.println(i + "," + sum);
+			if(min == 0) {
+				min = sum;
+				minPoint = new Point(x, y);
+			}
+			else if(min > sum) {
+				min = sum;
+				minPoint = new Point(x, y);
+			}
+		}
+		waitingPoint = minPoint;
 	}
 	
 	public void print() {
@@ -209,6 +240,7 @@ public class Map {
 		}
 		entrance.print();
 		exit.print();
+		waitingPoint.print();
 	}
 	
 	public boolean getIfValid() {

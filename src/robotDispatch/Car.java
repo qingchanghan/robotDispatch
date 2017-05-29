@@ -13,6 +13,15 @@ public class Car {
 	
 	public boolean ifGiveUp;
 	
+	public short currentStatus;
+	public static final short waitingOut = 1;
+	public static final short waitingRobotIn = 2;
+	public static final short comingIn = 3;
+	public static final short parking = 4;
+	public static final short waitingRobotOut = 5;
+	public static final short goOut = 6;
+	public static final short finished = 7;
+	
 	public int actualInTime;
 	public int actualOutTime;
 	
@@ -25,6 +34,24 @@ public class Car {
 		this.applyOutTime = t2;
 		this.maxWaitingTime = maxTime;
 		this.mass = mass;
+	}
+	
+	public int getIfCanInAndMass(int time) {//判断该车在当前时间是否能进入 如果已经超时返回-1 如果不能返回0 能则返回车的质量mass
+		if(time > applyInTime + maxWaitingTime) {
+			ifGiveUp = true;
+			return -1;
+		} else if(time >= applyInTime)
+			return mass;
+		else
+			return 0;
+	}
+	
+	public short getCurrentStatus() {
+		return currentStatus;
+	}
+	
+	public boolean getIfGiveUp() {//是否放弃
+		return ifGiveUp;
 	}
 	
 	public void printInfo() {

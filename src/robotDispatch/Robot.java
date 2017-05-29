@@ -1,7 +1,8 @@
 package robotDispatch;
 
-public class Rebot {
+public class Robot {
 	
+	public int id;
 	public Point currentPoint;
 	
 	public int curStatus;
@@ -10,4 +11,8 @@ public class Rebot {
 	public Point targetPoint;
 	public int weight;
 	public int currentWork;
+	
+	public Robot(int id) {
+		
+	}
 }

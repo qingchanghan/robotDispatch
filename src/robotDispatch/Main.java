@@ -26,7 +26,7 @@ public class Main {
 	}
 	
 	private static void input() throws Exception {
-		String fileInPath = "D:\\java_files\\resource\\test.txt";
+		String fileInPath = "D:\\java_files\\resource\\1.txt";
  		File f = new File(fileInPath);
  		Scanner cin = new Scanner(new FileInputStream(f));
 	
