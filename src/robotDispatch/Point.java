@@ -22,6 +22,19 @@ public class Point {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public void setByDirection(char direction) {
+		if(direction == 'u')
+			x -= 1;
+		else if(direction == 'd')
+			x += 1;
+		else if(direction == 'l')
+			y -= 1;
+		else if(direction == 'r')
+			y+= 1;
+		else
+			System.out.println("direction error");
+	}
 
 	public void print() {
 		System.out.println("(" + x + "," + y + ")");

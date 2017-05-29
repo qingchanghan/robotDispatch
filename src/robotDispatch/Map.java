@@ -1,5 +1,6 @@
 package robotDispatch;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -12,14 +13,22 @@ public class Map {
 	public Point entrance;
 	public Point exit;
 	public Point waitingPoint;
+	public int averageLength;
 	
 	public short[][] pathLength;
 	public char[][] pathDir;
+	
+	public int parkAmount;
+	public int currentPark;
+	public ArrayList<Point> parkList;
 	
 	public Map(int w, int h, char[][] map) {
 		this.w = w;
 		this.h = h;
 		this.map = map;
+		parkAmount = 0;
+		currentPark = 0;
+		parkList = new ArrayList<>();
 		ifValid = judge();
 		if(ifValid) {
 			setWaitingPoint();
@@ -47,6 +56,10 @@ public class Map {
 				}
 				if(map[i][j] == 'P' && !ifAreaValid(i, j))
 					return false;
+				if(map[i][j] == 'P'){
+					parkAmount++;
+					parkList.add(new Point(i, j));
+				}
 			}
 		}
 		if(entrance.equal1(exit)) {
@@ -79,11 +92,11 @@ public class Map {
 			}
 		
 		int v = entrance.getX()*h + entrance.getY(), u = exit.getX()*h + exit.getY();
-		for(int i = 0; i < w; i++) {
-			for(int j = 0; j < h; j++) {
-				if(map[i][j] == 'P' && (pathLength[v][i*h+j] == 0 || pathLength[u][i*h+j] == 0)) {
-					return false;
-				}
+		for(int i = 0; i < parkList.size(); i++) {
+			Point p = parkList.get(i);
+			int x = p.getX(), y = p.getY();
+			if(map[x][y] == 'P' && (pathLength[v][x*h+y] == 0 || pathLength[u][x*h+y] == 0)) {
+				return false;
 			}
 		}
 		
@@ -197,13 +210,13 @@ public class Map {
 	
 	public void setWaitingPoint() {
 		//设置机器人等待点
-		int i, min = 0;
+		int i, min = 0, minNum = 1;
 		Point minPoint = null;
 		for(i = 0; i < w*h; i++) {
 			int x = i / h, y = i % h;
 			if(map[x][y] != 'X')
 				continue;
-			int sum = 0, j;
+			int sum = 0, j, num = 0;
 			for(j = 0; j < w*h; j++) {
 				int x1 = j / h, y1 = j % h;
 				if(i == j || map[x1][y1] == 'B' || map[x1][y1] == 'X') {
@@ -214,20 +227,23 @@ public class Map {
 					break;
 				}
 				sum += pathLength[i][j];
+				num++;
 			}
 			if(j == -1)
 				continue;
-			System.out.println(i + "," + sum);
 			if(min == 0) {
 				min = sum;
 				minPoint = new Point(x, y);
+				minNum = num;
 			}
 			else if(min > sum) {
 				min = sum;
 				minPoint = new Point(x, y);
+				minNum = num;
 			}
 		}
 		waitingPoint = minPoint;
+		averageLength = min / minNum;
 	}
 	
 	public void print() {
@@ -241,9 +257,30 @@ public class Map {
 		entrance.print();
 		exit.print();
 		waitingPoint.print();
+		System.out.println(averageLength);
 	}
 	
 	public boolean getIfValid() {
 		return ifValid;
+	}
+	
+	public Point getWaitingPoint() {
+		return waitingPoint;
+	}
+	
+	public int getAverageLength() {
+		return averageLength;
+	}
+	
+	public Point getEntrance() {
+		return entrance;
+	}
+	
+	public char getDirection(Point p1, Point p2) {
+		return pathDir[p1.getX()*h+p1.getY()][p2.getX()*h+p2.getY()];
+	}
+	
+	public boolean ifParkFull() {
+		return parkAmount == currentPark;
 	}
 }

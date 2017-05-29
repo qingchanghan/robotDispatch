@@ -2,6 +2,8 @@ package robotDispatch;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {
@@ -18,7 +20,7 @@ public class Main {
 		
 		if(map.getIfValid()) {
 			System.out.println("YES");
-			dispatch();
+			dispatchNum(1);
 		} else {
 			System.out.println("NO");
 		}
@@ -26,7 +28,7 @@ public class Main {
 	}
 	
 	private static void input() throws Exception {
-		String fileInPath = "D:\\java_files\\resource\\1.txt";
+		String fileInPath = "D:\\java_files\\resource\\test.txt";
  		File f = new File(fileInPath);
  		Scanner cin = new Scanner(new FileInputStream(f));
 	
@@ -84,7 +86,81 @@ public class Main {
 	}
 	
 	private static void dispatch() {
-		
+		int max = map.getAverageLength() < N ? map.getAverageLength() : N;
+		int min = 0, z = 0, minM = 0;
+		for(int m = 1; m <= max; m++) {
+			z = dispatchNum(m);
+			if(min == 0) {
+				min = z;
+				minM = m;
+			} else if(z < min) {
+				min = z;
+				minM = m;
+			}
+		}
+		clearCars();
+		z = dispatchNum(minM);
+		System.out.println(minM);
 	}
 
+	private static int dispatchNum(int m) {
+		int time = 0;
+		Robot[] robots = new Robot[m];
+		for(int i = 0; i < m; i++) {
+			robots[i] = new Robot(i, map.getEntrance(), map.getWaitingPoint());
+		}
+		while(true) {
+			for(int i = 0; i < m; i++) {
+				robots[i].oneStep(map.getDirection(robots[i].currentPoint, robots[i].getTargetPoint()));
+			}
+			
+			ArrayList<Car> requestList = new ArrayList<>();
+			for(int j = 0; j < cars.length; j++) {
+				if(cars[j].getIfGiveUp())
+					continue;
+				int result = cars[j].getIfCanInAndMass(time);
+				if(result > 0) {
+					requestList.add(cars[j]);
+				}
+			}
+			Comparator<Car> c1 = new Comparator<Car>() {  
+	            @Override  
+	            public int compare(Car o1, Car o2) {  
+	                // TODO Auto-generated method stub  
+	                if(o1.getMass() < o2.getMass())  
+	                    return 1; 
+	                else return -1;
+	            }  
+	        };        
+			requestList.sort(c1);
+			for(int i = 0; i < requestList.size(); i++) {
+				requestList.get(i).printInfo();
+			}
+			
+			for(int i = 0; i < requestList.size(); i++) {
+				Car car = requestList.get(i);
+				if(car.getCurrentStatus() == Car.notStarted && map.ifParkFull())
+					continue;
+				ArrayList<Robot> freeList = new ArrayList<>();
+				for(int j = 0; j < m; j++)
+					if(robots[j].ifFree)
+						freeList.add(robots[j]);
+				if(car.getCurrentStatus() == Car.notStarted) {
+					
+				} else if(car.getCurrentStatus() == Car.parking) {
+					
+				}
+			}
+		}
+		return 0;
+		
+		
+		
+		
+	}
+	
+	private static void clearCars() {
+		for(int i = 0; i < cars.length; i++)
+			cars[i].clear();
+	}
 }
