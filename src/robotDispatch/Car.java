@@ -25,6 +25,8 @@ public class Car {
 	
 	public int actualInTime;
 	public int actualOutTime;
+	public int inRobotId;
+	public int outRobotId;
 	
 	public Point parkPoint;
 	public ArrayList<Point> inPath;
@@ -41,7 +43,7 @@ public class Car {
 		outPath = new ArrayList<>();
 	}
 	
-	public int getIfCanInAndMass(int time) {//判断该车在当前时间是否能进入 如果已经超时返回-1 如果不能返回0 能则返回车的质量mass
+	public int getIfCanAndMass(int time) {//判断该车在当前时间是否能进入或出去 如果已经超时返回-1 如果不能返回0 能则返回车的质量mass
 		if(currentStatus == notStarted) {
 			if(time > applyInTime + maxWaitingTime) {
 				ifGiveUp = true;
@@ -60,7 +62,6 @@ public class Car {
 		}
 		return 0;
 	}
-		
 	
 	public short getCurrentStatus() {
 		return currentStatus;
@@ -71,7 +72,23 @@ public class Car {
 	}
 	
 	public void printInfo() {
-		System.out.println(id + " " + applyInTime + " " + applyOutTime + " " + maxWaitingTime + " " + mass);
+		//System.out.println(id + " " + applyInTime + " " + applyOutTime + " " + maxWaitingTime + " " + mass);
+		System.out.print(id+" ");
+		if(ifGiveUp) {
+			System.out.println("yes");
+		} else {
+			System.out.print("no " + inRobotId + " " + actualInTime + " ");
+			for(int i = 0; i < inPath.size(); i++) {
+				inPath.get(i).print();
+				System.out.print(" ");
+			}
+			System.out.print(outRobotId + " " + actualOutTime);
+			for(int i = 0; i < outPath.size(); i++) {
+				System.out.print(" ");
+				outPath.get(i).print();
+			}
+			System.out.println();
+		}
 	}
 	
 	public void clear() {
@@ -81,6 +98,7 @@ public class Car {
 		actualOutTime = 0;
 		inPath.clear();
 		outPath.clear();
+		parkPoint = null;
 	}
 	
 	public int getMass() {
@@ -97,5 +115,37 @@ public class Car {
 	
 	public void setStatus(short s) {
 		currentStatus = s;
+	}
+	
+	public void setParkPoint(Point p) {
+		parkPoint = p.copy();
+	}
+	
+	public Point getParkPoint() {
+		return parkPoint;
+	}
+	
+	public boolean ifFinished() {
+		return currentStatus == finished;
+	}
+	
+	public void setActualInTime(int time) {
+		actualInTime = time;
+	}
+	
+	public void setActualOutTime(int time) {
+		actualOutTime = time;
+	}
+	
+	public int getT1() {
+		return actualInTime - applyInTime + actualOutTime - applyOutTime;
+	}
+	
+	public void setInRobotId(int id) {
+		inRobotId = id;
+	}
+	
+	public void setOutRobotId(int id) {
+		outRobotId = id;
 	}
 }

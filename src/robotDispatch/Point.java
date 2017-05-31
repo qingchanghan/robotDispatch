@@ -37,7 +37,7 @@ public class Point {
 	}
 
 	public void print() {
-		System.out.println("(" + x + "," + y + ")");
+		System.out.print("(" + x + "," + y + ")");
 	}
 	
 	public boolean equal1(Point p) {
@@ -45,5 +45,9 @@ public class Point {
 			return true;
 		else
 			return false;
+	}
+	
+	public Point copy() {
+		return new Point(x, y);
 	}
 }

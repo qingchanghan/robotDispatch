@@ -22,14 +22,18 @@ public class Robot {
 	public Point waitingPoint;
 	public int weight;
 	public int currentWork;
+	public Point entrance;
+	public Point exit;
 	
-	public Robot(int id, Point entrance, Point waitingPoint) {
+	public Robot(int id, Point entrance, Point exit, Point waitingPoint) {
 		this.id = id;
-		currentPoint = entrance;
+		currentPoint = entrance.copy();
+		this.entrance = entrance;
+		this.exit = exit;
 		currentStatus = start;
 		this.waitingPoint = waitingPoint;
 		setIfFree();
-		targetPoint = currentPoint;
+		targetPoint = entrance.copy();
 		currentWork = 0;
 		weight = 0;
 	}
@@ -41,16 +45,16 @@ public class Robot {
 			ifFree = false;
 	}
 	
-	public void oneStep(char direction) {
+	public void oneStep(char direction, int time) {
 		if(currentStatus != start && currentStatus != waiting) {
 			currentPoint.setByDirection(direction);
 			switch(currentStatus) {
 			case fromEntranceToPark:
-				carryCar.addInPath(currentPoint);
+				carryCar.addInPath(currentPoint.copy());
 				currentWork += weight;
 				break;
 			case fromParkToExit:
-				carryCar.addOutPath(currentPoint);
+				carryCar.addOutPath(currentPoint.copy());
 				currentWork += weight;
 				break;
 			default:
@@ -61,10 +65,14 @@ public class Robot {
 				case fromWaitingToEntrance:
 					currentStatus = fromEntranceToPark;
 					carryCar.setStatus(Car.comingIn);
+					carryCar.addInPath(currentPoint.copy());
+					targetPoint = carryCar.getParkPoint().copy();
+					carryCar.setActualInTime(time);
 					break;
 				case fromEntranceToPark:
 					currentStatus = fromParkToWaiting;
 					carryCar.setStatus(Car.parking);
+					targetPoint = waitingPoint.copy();
 					break;
 				case fromParkToWaiting:
 					currentStatus = waiting;
@@ -72,10 +80,14 @@ public class Robot {
 				case fromWaitingToPark:
 					currentStatus = fromParkToExit;
 					carryCar.setStatus(Car.goOut);
+					carryCar.addOutPath(currentPoint.copy());
+					targetPoint = exit.copy();
 					break;
 				case fromParkToExit:
 					currentStatus = fromExitToWaiting;
 					carryCar.setStatus(Car.finished);
+					carryCar.setActualOutTime(time);
+					targetPoint = waitingPoint.copy();
 					break;
 				case fromExitToWaiting:
 					currentStatus = waiting;
@@ -88,11 +100,52 @@ public class Robot {
 		}
 	}
 	
+	public void assign(Car c, boolean flag, Point targetPark, int time) {//flag为true表示进入 false为出去
+		carryCar = c;
+		weight = c.getMass();
+		if(flag) {
+			c.setParkPoint(targetPark);
+			c.setInRobotId(id);
+			if(this.currentPoint.equal1(entrance)) {
+				this.currentStatus = fromEntranceToPark;
+				this.targetPoint = targetPark.copy();
+				c.setStatus(Car.comingIn);
+				c.setActualInTime(time);
+				c.addInPath(currentPoint.copy());
+			} else {
+				this.currentStatus = fromWaitingToEntrance;
+				this.targetPoint = entrance.copy();
+				c.setStatus(Car.waitingRobotIn);
+			}
+		} else {
+			c.setOutRobotId(id);
+			if(currentPoint.equal1(targetPark)) {
+				this.currentStatus = fromParkToExit;
+				this.targetPoint = exit.copy();
+				c.setStatus(Car.goOut);
+				c.addOutPath(currentPoint.copy());
+			} else {
+				this.currentStatus = fromWaitingToPark;
+				this.targetPoint = targetPark.copy();
+				c.setStatus(Car.waitingRobotOut);
+			}
+		}
+		setIfFree();
+	}
+	
 	public Point getCurrentPoint() {
 		return currentPoint;
 	}
 	
 	public Point getTargetPoint() {
 		return targetPoint;
+	}
+	
+	public int getWork() {
+		return currentWork;
+	}
+	
+	public boolean getIfFree() {
+		return ifFree;
 	}
 }

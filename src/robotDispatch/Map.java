@@ -20,7 +20,7 @@ public class Map {
 	
 	public int parkAmount;
 	public int currentPark;
-	public ArrayList<Point> parkList;
+	public ArrayList<ParkPoint> parkList;
 	
 	public Map(int w, int h, char[][] map) {
 		this.w = w;
@@ -58,7 +58,7 @@ public class Map {
 					return false;
 				if(map[i][j] == 'P'){
 					parkAmount++;
-					parkList.add(new Point(i, j));
+					parkList.add(new ParkPoint(i, j));
 				}
 			}
 		}
@@ -210,7 +210,7 @@ public class Map {
 	
 	public void setWaitingPoint() {
 		//设置机器人等待点
-		int i, min = 0, minNum = 1;
+		int i, min = -1, minNum = 1;
 		Point minPoint = null;
 		for(i = 0; i < w*h; i++) {
 			int x = i / h, y = i % h;
@@ -231,7 +231,7 @@ public class Map {
 			}
 			if(j == -1)
 				continue;
-			if(min == 0) {
+			if(min == -1) {
 				min = sum;
 				minPoint = new Point(x, y);
 				minNum = num;
@@ -276,11 +276,50 @@ public class Map {
 		return entrance;
 	}
 	
+	public Point getExit() {
+		return exit;
+	}
+	
 	public char getDirection(Point p1, Point p2) {
 		return pathDir[p1.getX()*h+p1.getY()][p2.getX()*h+p2.getY()];
 	}
 	
 	public boolean ifParkFull() {
 		return parkAmount == currentPark;
+	}
+	
+	public int getPathLength(Point p1, Point p2) {
+		return pathLength[p1.getX()*h+p1.getY()][p2.getX()*h+p2.getY()];
+	}
+	
+	public int getInLength(Point p1) {
+		return getPathLength(entrance, p1);
+	}
+	
+	public ParkPoint findNearestParkPoint() {
+		int min = -1, minI = -1;
+		for(int i = 0; i < parkList.size(); i++) {
+			if(!parkList.get(i).getIfFree())
+				continue;
+			int tmp = getPathLength(parkList.get(i), entrance);
+			if(min == -1) {
+				min = tmp;
+				minI = i;
+			} else if(min > tmp) {
+				min = tmp;
+				minI = i;
+			}
+		}
+		currentPark++;
+		ParkPoint p = parkList.get(minI);
+		p.setIfFree(false);
+		return p;
+	}
+	
+	public void clear() {
+		parkAmount = parkList.size();
+		currentPark = 0;
+		for(int i = 0; i < parkList.size(); i++)
+			parkList.get(i).setIfFree(true);
 	}
 }
