@@ -28,9 +28,9 @@ public class Car {
 	public int inRobotId;
 	public int outRobotId;
 	
-	public Point parkPoint;
-	public ArrayList<Point> inPath;
-	public ArrayList<Point> outPath;
+	public Point parkPoint;//车辆停放位置
+	public ArrayList<Point> inPath;//进入路径
+	public ArrayList<Point> outPath;//出去路径
 	
 	public Car(int id, int t1, int t2, int maxTime, int mass) {
 		this.id = id;

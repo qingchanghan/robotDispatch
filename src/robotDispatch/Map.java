@@ -9,18 +9,18 @@ public class Map {
 	public char[][] map;
 	public int w;
 	public int h;
-	public boolean ifValid;
-	public Point entrance;
-	public Point exit;
-	public Point waitingPoint;
-	public int averageLength;
+	public boolean ifValid;//地图是否正确
+	public Point entrance;//入口
+	public Point exit;//出口
+	public Point waitingPoint;//等待点
+	public int averageLength;//等待点到车位和出入口的平均长度
 	
 	public short[][] pathLength;
 	public char[][] pathDir;
 	
-	public int parkAmount;
-	public int currentPark;
-	public ArrayList<ParkPoint> parkList;
+	public int parkAmount;//车位总数
+	public int currentPark;//当前停放车辆数
+	public ArrayList<ParkPoint> parkList;//车位列表
 	
 	public Map(int w, int h, char[][] map) {
 		this.w = w;

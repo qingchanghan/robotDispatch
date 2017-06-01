@@ -15,7 +15,7 @@ public class Robot {
 	public static final short fromExitToWaiting = 6;
 	public static final short waiting = 7;
 	
-	public boolean ifFree;
+	public boolean ifFree;//ÊÇ·ñ´¦ÓÚ¿ÕÏÐ×´Ì¬
 	
 	public Car carryCar;
 	public Point targetPoint;
